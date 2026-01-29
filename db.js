@@ -5,7 +5,7 @@ const db = mysql.createConnection({
   host: "localhost",
   user: "root",
   password: "",
-  database: "kanban_app",
+  database: "vantageboard",
 });
 
 db.connect((err) => {
