@@ -1,0 +1,19 @@
+Test ID,Module,Test Scenario,Test Steps,Expected Result,Actual Result,Status
+TC-001,Authentication,Register with Valid Data,"1. Enter Username, Email, Password (>6 chars) 2. Click Register",Account created successfully message.,Account created successfully.,PASS
+TC-002,Authentication,Register Short Password,"1. Enter Password (<6 chars) 2. Click Register",Error: Password must be at least 6 characters.,Error displayed.,PASS
+TC-003,Authentication,Login Valid,"1. Enter Valid Email & Password 2. Click Login",Redirect to Dashboard.,Redirected to Dashboard.,PASS
+TC-004,Profile,Update Username,"1. Edit Username 2. Click Update",Username updates. Email stays read-only.,Username updated. Email disabled.,PASS
+TC-005,Security,Secure Logout,"1. Logout 2. Click Browser Back Button",Redirect to Login; cannot access Dashboard.,Access denied.,PASS
+TC-006,Dashboard,Board Statistics,"1. View Board Card",Show Total vs Remaining tasks.,Correct counts displayed.,PASS
+TC-007,Search,Search Boards,"1. Type keyword in search bar",Filter boards by Title/Tag/Desc.,Filtered correctly.,PASS
+TC-008,Search,Search Tasks,"1. Type unique task keyword",Show 'Matching Tasks' section.,Tasks displayed.,PASS
+TC-009,Board,Create Board,"1. Enter Title, Tags, Description 2. Save",Board created; details hidden on dashboard.,Board created.,PASS
+TC-010,Board,External Links,"1. Add Link Name and URL",Link Name displayed and clickable.,Link works.,PASS
+TC-011,Board,Edit Board,"1. Change Title and Links 2. Save",Updates reflect immediately.,Updates reflected.,PASS
+TC-012,Board,Invite User,"1. Enter valid email 2. Invite",User added to board members.,User added.,PASS
+TC-013,Tasks,DEFCON Priority,"1. Select DEFCON 1 2. Save",Task has Red border.,Red border displayed.,PASS
+TC-014,Tasks,Assign Valid User,"1. Enter Board Member email",Task assigned to user.,User assigned.,PASS
+TC-015,Tasks,Assign Invalid User,"1. Enter Non-Member email",Error: Invalid user.,Error displayed.,PASS
+TC-016,Tasks,Advance Task,"1. Click Tick Icon on To Do task",Moves to In Progress.,Moved to In Progress.,PASS
+TC-017,Tasks,Drag and Drop,"1. Drag task between columns",Task position updates in DB.,Task moved.,PASS
+TC-018,Tasks,Edit Task,"1. Open Task 2. Change Data 3. Save",Task data updates.,Task updated.,PASS

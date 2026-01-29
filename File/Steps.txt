@@ -1,0 +1,7 @@
+1. Connect XAMPP database module (MySQL). 
+2. Open the Terminal app and Go to the Project Folder
+3. Install Libraries type: npm install
+I excluded  node_modules to keep the project light. Just run: npm install 
+and the computer downloads them automatically based on the package.json list
+4. Start the Engine, Type: node server.js
+5. Launch the App 
