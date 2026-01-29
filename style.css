@@ -1,0 +1,217 @@
+/* Basic reset */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+/* Fonts */
+body {
+  font-family: Inter, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background: #222;
+  color: #e9e9e9;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Layout for auth pages */
+.page-auth .auth-shell {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 20px;
+}
+
+/* Card */
+.auth-card {
+  width: min(980px, 92%);
+  background: transparent;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Title */
+.brand-title {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 20px;
+  color: #fff;
+}
+
+/* Form */
+.auth-form {
+  width: 100%;
+  max-width: 420px;
+  background: rgba(30, 30, 30, 0.6);
+  padding: 28px;
+  border-radius: 12px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+/* Fields */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.field label {
+  font-size: 13px;
+  color: #bfbfbf;
+}
+
+.field input {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  color: #fff;
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  outline: none;
+}
+
+.field input::placeholder {
+  color: rgba(255, 255, 255, 0.35);
+}
+
+/* Buttons */
+.btn {
+  display: inline-block;
+  border: none;
+  padding: 10px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.btn.primary {
+  background: linear-gradient(180deg, #890111, #6e010d);
+  color: #fff;
+  width: 100%;
+  box-shadow: 0 6px 18px rgba(137, 1, 17, 0.25);
+}
+
+.btn.tertiary {
+  background: transparent;
+  color: #fff;
+  width: 100%;
+  border: 1px dashed rgba(255, 255, 255, 0.06);
+  margin-top: 12px;
+}
+
+/* Links & text */
+.link {
+  color: #d96a73;
+  text-decoration: none;
+}
+
+.link.subtle {
+  color: #b5b5b5;
+  font-size: 13px;
+  margin-left: 12px;
+}
+
+.signup-prompt {
+  margin-top: 14px;
+  text-align: center;
+  color: #cfcfcf;
+  font-size: 14px;
+}
+
+/* Divider */
+.divider {
+  text-align: center;
+  margin: 12px 0;
+  color: #9b9b9b;
+}
+
+/* Form row */
+.form-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-content: space-between;
+}
+
+/* PROMPT / ERROR OVERLAY */
+.prompt-overlay {
+  position: fixed;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: rgba(10, 10, 10, 0.55);
+  z-index: 1200;
+  padding: 40px;
+}
+
+.prompt-overlay.show {
+  display: flex;
+}
+
+/* Prompt card */
+.prompt-card {
+  width: min(820px, 88%);
+  max-width: 1000px;
+  background: #000;
+  padding: 56px 48px 72px;
+  border-radius: 4px;
+  text-align: center;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.02);
+}
+
+/* Prompt title */
+.prompt-title {
+  font-size: 36px;
+  line-height: 1.05;
+  color: #fff;
+  font-weight: 800;
+  margin-bottom: 36px;
+  letter-spacing: -0.02em;
+}
+
+/* Prompt sub text */
+.prompt-sub {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.45);
+  margin-bottom: 22px;
+}
+
+/* Prompt button */
+.prompt-btn {
+  background: linear-gradient(180deg, #890111, #6e010d);
+  color: #fff;
+  padding: 12px 22px;
+  border-radius: 8px;
+  border: none;
+  font-weight: 700;
+  font-size: 16px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+  min-width: 80px;
+}
+
+/* Responsive */
+@media (max-width: 560px) {
+  .auth-form {
+    padding: 18px;
+  }
+  .prompt-card {
+    padding: 28px 18px;
+  }
+  .prompt-title {
+    font-size: 22px;
+    margin-bottom: 20px;
+  }
+}

@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>SoftLab — Dashboard</title>
+    <link rel="stylesheet" href="style1.css" />
+    <style>
+      .search-results {
+        position: absolute;
+        top: 60px;
+        right: 20px;
+        background: #333;
+        border: 1px solid #555;
+        width: 250px;
+        display: none;
+        z-index: 10;
+        padding: 10px;
+        border-radius: 8px;
+      }
+      .search-item {
+        padding: 8px;
+        border-bottom: 1px solid #444;
+        cursor: pointer;
+        color: #fff;
+      }
+      .search-item:hover {
+        background: #444;
+      }
+
+      .delete-board-btn {
+        float: right;
+        color: #d96a73;
+        cursor: pointer;
+        font-weight: bold;
+        padding: 5px;
+      }
+      .delete-board-btn:hover {
+        background: rgba(255, 0, 0, 0.1);
+        border-radius: 4px;
+      }
+
+      .stat-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 5px;
+        font-size: 11px;
+        margin-top: 10px;
+        color: #aaa;
+      }
+      .stat-item b {
+        color: #fff;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header class="header">
+        <div class="brand">
+          <div class="logo">SL</div>
+          <div class="logo-large">Dashboard</div>
+        </div>
+        <nav class="nav">
+          <div style="position: relative">
+            <input
+              class="input search-input"
+              id="globalSearch"
+              placeholder="Search..."
+              onkeyup="doSearch()"
+            />
+            <div id="searchResults" class="search-results"></div>
+          </div>
+          <a class="muted" href="profile_settings.html">Profile</a>
+        </nav>
+      </header>
+
+      <main style="margin-top: 18px">
+        <div class="card">
+          <div
+            style="
+              display: flex;
+              justify-content: flex-end;
+              margin-bottom: 20px;
+            "
+          >
+            <button
+              class="btn"
+              onclick="window.location.href = 'create_board.html'"
+            >
+              Create New Board +
+            </button>
+          </div>
+          <div class="board-grid" id="boardGrid">Loading...</div>
+        </div>
+      </main>
+    </div>
+
+    <script>
+      const user = JSON.parse(localStorage.getItem("user"));
+      if (!user) window.location.href = "login.html";
+
+      // 1. Search Function
+      async function doSearch() {
+        const q = document.getElementById("globalSearch").value;
+        const box = document.getElementById("searchResults");
+        if (q.length < 2) {
+          box.style.display = "none";
+          return;
+        }
+
+        const res = await fetch(
+          `http://localhost:3000/search?userId=${user.id}&q=${q}`,
+        );
+        const data = await res.json();
+
+        box.innerHTML = "";
+        box.style.display = "block";
+        if (data.length === 0)
+          box.innerHTML = "<div class='search-item'>No results</div>";
+
+        data.forEach((item) => {
+          const div = document.createElement("div");
+          div.className = "search-item";
+          div.textContent = item.title;
+          div.onclick = () =>
+            (window.location.href = `board_fullview.html?id=${item.id}`);
+          box.appendChild(div);
+        });
+      }
+
+      // 2. Load Boards with Expanded Stats
+      async function loadBoards() {
+        const res = await fetch(`http://localhost:3000/boards/${user.id}`);
+        const boards = await res.json();
+        const grid = document.getElementById("boardGrid");
+        grid.innerHTML = "";
+
+        if (boards.length === 0) {
+          grid.innerHTML = "<p class='muted'>No boards found.</p>";
+          return;
+        }
+
+        boards.forEach((board) => {
+          const card = document.createElement("div");
+          card.className = "card clickable-card";
+
+          // Delete Board Button
+          const delBtn = `<span class="delete-board-btn" onclick="deleteBoard(event, ${board.id})">🗑</span>`;
+
+          card.innerHTML = `
+                ${delBtn}
+                <div onclick="window.location.href='board_fullview.html?id=${board.id}'" style="cursor:pointer">
+                    <h3 class="h2">${board.title}</h3>
+                    <div class="muted small">Created: ${new Date(board.created_at).toLocaleDateString()}</div>
+                    <hr style="border-color: rgba(255,255,255,0.1); margin: 8px 0;">
+                    
+                    <div class="stat-grid">
+                        <div class="stat-item">Total: <b>${board.total_tasks}</b></div>
+                        <div class="stat-item">Remaining: <b>${board.remaining_tasks}</b></div>
+                        <div class="stat-item">In Progress: <b>${board.in_progress_tasks}</b></div>
+                        <div class="stat-item">Review: <b>${board.under_review_tasks}</b></div>
+                    </div>
+                </div>
+            `;
+          grid.appendChild(card);
+        });
+      }
+
+      // 3. Delete Board Logic
+      async function deleteBoard(e, id) {
+        e.stopPropagation(); // Prevent entering board
+        if (!confirm("Are you sure you want to delete this board?")) return;
+
+        const res = await fetch(`http://localhost:3000/boards/${id}`, {
+          method: "DELETE",
+        });
+
+        // take care of "Strong Warning" for undone tasks
+        if (res.status === 409) {
+          const data = await res.json();
+          if (confirm(data.msg + "\n\nThis action cannot be undone.")) {
+            await fetch(`http://localhost:3000/boards/${id}?force=true`, {
+              method: "DELETE",
+            });
+            loadBoards();
+          }
+        } else {
+          loadBoards();
+        }
+      }
+
+      loadBoards();
+    </script>
+  </body>
+</html>

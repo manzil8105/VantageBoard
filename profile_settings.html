@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>SoftLab — Profile Settings</title>
+    <link rel="stylesheet" href="style1.css" />
+    <style>
+      .section-divider {
+        margin-top: 30px;
+        padding-top: 20px;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+      }
+      .btn.danger {
+        background-color: #d96a73;
+        color: white;
+      }
+      .btn.danger:hover {
+        background-color: #b8545c;
+      }
+      .btn.secondary {
+        background-color: #444;
+        color: white;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header class="header">
+        <div class="brand">
+          <div class="logo">SL</div>
+          <div class="logo-large">Account Settings</div>
+        </div>
+        <nav class="nav">
+          <a class="muted" href="dashboard.html">Dashboard</a>
+        </nav>
+      </header>
+
+      <main style="max-width: 500px; margin: 40px auto">
+        <div class="card">
+          <h2 class="h2">Edit Profile</h2>
+          <div class="form-group" style="margin-top: 20px">
+            <label class="small">Username</label>
+            <input class="input" id="profUser" />
+          </div>
+          <div class="form-group" style="margin-top: 15px">
+            <label class="small">Email Address (Read-only)</label>
+            <input
+              class="input"
+              id="profEmail"
+              readonly
+              disabled
+              style="opacity: 0.5"
+            />
+          </div>
+          <button
+            class="btn"
+            style="width: 100%; margin-top: 20px"
+            onclick="updateProfile()"
+          >
+            Update Name
+          </button>
+
+          <div class="section-divider">
+            <h2 class="h2">Security</h2>
+            <p class="muted small" style="margin-bottom: 15px">
+              Update your password regularly to stay secure.
+            </p>
+
+            <div class="form-group">
+              <label class="small">Current Password</label>
+              <input
+                type="password"
+                class="input"
+                id="currPass"
+                placeholder="••••••••"
+              />
+            </div>
+            <div class="form-group" style="margin-top: 10px">
+              <label class="small">New Password (Min 6 chars)</label>
+              <input
+                type="password"
+                class="input"
+                id="newPass"
+                placeholder="••••••••"
+              />
+            </div>
+            <div class="form-group" style="margin-top: 10px">
+              <label class="small">Confirm New Password</label>
+              <input
+                type="password"
+                class="input"
+                id="confirmNewPass"
+                placeholder="••••••••"
+              />
+            </div>
+            <button
+              class="btn secondary"
+              style="width: 100%; margin-top: 20px"
+              onclick="changePassword()"
+            >
+              Change Password
+            </button>
+          </div>
+
+          <div class="section-divider">
+            <button
+              class="btn danger"
+              style="width: 100%"
+              onclick="confirmLogout()"
+            >
+              Log Out
+            </button>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <script>
+      // Security check
+      const user = JSON.parse(localStorage.getItem("user"));
+      if (!user) {
+        window.location.replace("login.html");
+      } else {
+        document.getElementById("profUser").value = user.username;
+        document.getElementById("profEmail").value = user.email;
+      }
+
+      // 1. Update Username
+      async function updateProfile() {
+        const newName = document.getElementById("profUser").value;
+        const res = await fetch("http://localhost:3000/update-profile", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ userId: user.id, newName }),
+        });
+        if (res.ok) {
+          user.username = newName;
+          localStorage.setItem("user", JSON.stringify(user));
+          alert("Username updated!");
+        }
+      }
+
+      // 2. Change Password Logic
+      async function changePassword() {
+        const currentPassword = document.getElementById("currPass").value;
+        const newPassword = document.getElementById("newPass").value;
+        const confirmNew = document.getElementById("confirmNewPass").value;
+
+        // Validations
+        if (!currentPassword || !newPassword || !confirmNew) {
+          return alert("Please fill in all password fields.");
+        }
+        if (newPassword.length < 6) {
+          return alert("New password must be at least 6 characters.");
+        }
+        if (newPassword !== confirmNew) {
+          return alert("New passwords do not match.");
+        }
+
+        try {
+          const res = await fetch("http://localhost:3000/change-password", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              userId: user.id,
+              currentPassword,
+              newPassword,
+            }),
+          });
+
+          const data = await res.json();
+
+          if (res.ok) {
+            alert(data.msg);
+            // Clear fields after success
+            document.getElementById("currPass").value = "";
+            document.getElementById("newPass").value = "";
+            document.getElementById("confirmNewPass").value = "";
+          } else {
+            alert("Error: " + data.msg);
+          }
+        } catch (e) {
+          alert("Could not connect to server.");
+        }
+      }
+
+      // 3. Logout Logic
+      function confirmLogout() {
+        if (confirm("Are you sure you want to log out?")) {
+          localStorage.removeItem("user");
+          window.location.replace("login.html");
+        }
+      }
+    </script>
+  </body>
+</html>

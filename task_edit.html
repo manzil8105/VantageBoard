@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>SoftLab — Edit Task</title>
+    <link rel="stylesheet" href="style1.css" />
+  </head>
+  <body>
+    <div class="container">
+      <header class="header">
+        <div class="brand">
+          <div class="logo">SL</div>
+          <div class="logo-large">Edit Task</div>
+        </div>
+        <nav class="nav"><a class="muted" href="dashboard.html">Cancel</a></nav>
+      </header>
+
+      <main style="max-width: 600px; margin: 40px auto">
+        <div class="card">
+          <div class="form-group">
+            <label class="small">Task Title</label>
+            <input class="input" id="editTitle" />
+          </div>
+          <div class="form-group">
+            <label class="small">Priority</label>
+            <select class="input" id="editPriority">
+              <option value="L">Low</option>
+              <option value="M">Medium</option>
+              <option value="H">High</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="small">Description</label>
+            <textarea class="input" id="editDesc" rows="5"></textarea>
+          </div>
+          <div style="margin-top: 20px; display: flex; gap: 10px">
+            <button class="btn" onclick="updateTask()">Update Task</button>
+            <button class="btn ghost" onclick="history.back()">Back</button>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <script>
+      const urlParams = new URLSearchParams(window.location.search);
+      const taskId = urlParams.get("id");
+
+      // Load existing task data
+      async function loadTask() {
+        const res = await fetch(`http://localhost:3000/task-details/${taskId}`);
+        const task = await res.json();
+        document.getElementById("editTitle").value = task.title;
+        document.getElementById("editDesc").value = task.description;
+        document.getElementById("editPriority").value = task.priority;
+      }
+
+      async function updateTask() {
+        const payload = {
+          title: document.getElementById("editTitle").value,
+          priority: document.getElementById("editPriority").value,
+          description: document.getElementById("editDesc").value,
+        };
+
+        const res = await fetch(`http://localhost:3000/tasks/${taskId}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+
+        if (res.ok) {
+          alert("Task Updated");
+          window.history.back();
+        }
+      }
+
+      if (taskId) loadTask();
+    </script>
+  </body>
+</html>

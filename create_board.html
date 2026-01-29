@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Create Board</title>
+    <link rel="stylesheet" href="style1.css" />
+    <style>
+      .link-badge {
+        background: #890111;
+        color: white;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 12px;
+        margin-right: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header class="header">
+        <div class="brand">
+          <div class="logo">SL</div>
+          <div class="logo-large">New Board</div>
+        </div>
+        <nav class="nav"><a class="muted" href="dashboard.html">Back</a></nav>
+      </header>
+
+      <main style="max-width: 600px; margin: 40px auto">
+        <div class="card">
+          <h2 class="h2">Create New Board</h2>
+          <div class="form-group">
+            <label class="small">Title</label
+            ><input class="input" id="boardTitle" />
+          </div>
+          <div class="form-group">
+            <label class="small">Tags (Comma separated)</label
+            ><input class="input" id="boardTags" placeholder="Design, Dev..." />
+          </div>
+          <div class="form-group">
+            <label class="small">Description</label
+            ><textarea class="input" id="boardDesc" rows="3"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label class="small">External Links</label>
+            <div style="display: flex; gap: 5px; margin-bottom: 5px">
+              <input
+                class="input"
+                id="linkName"
+                placeholder="Name (e.g. Facebook)"
+                style="flex: 1"
+              />
+              <input
+                class="input"
+                id="linkUrl"
+                placeholder="URL"
+                style="flex: 2"
+              />
+              <button class="btn ghost small" onclick="addLink()">+</button>
+            </div>
+            <div id="linkList"></div>
+          </div>
+
+          <button
+            class="btn"
+            style="margin-top: 20px; width: 100%"
+            onclick="saveBoard()"
+          >
+            Create Board
+          </button>
+        </div>
+      </main>
+    </div>
+
+    <script>
+      const user = JSON.parse(localStorage.getItem("user"));
+      if (!user) window.location.href = "login.html";
+
+      let links = [];
+
+      function addLink() {
+        const title = document.getElementById("linkName").value;
+        const url = document.getElementById("linkUrl").value;
+        if (title && url) {
+          links.push({ title, url });
+          renderLinks();
+          document.getElementById("linkName").value = "";
+          document.getElementById("linkUrl").value = "";
+        }
+      }
+
+      function renderLinks() {
+        const div = document.getElementById("linkList");
+        div.innerHTML = links
+          .map((l) => `<span class="link-badge">${l.title}</span>`)
+          .join("");
+      }
+
+      async function saveBoard() {
+        const title = document.getElementById("boardTitle").value;
+        if (!title) return alert("Title required");
+
+        const payload = {
+          userId: user.id,
+          title: title,
+          tags: document.getElementById("boardTags").value,
+          description: document.getElementById("boardDesc").value,
+          links: links,
+        };
+
+        const res = await fetch("http://localhost:3000/create-board", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        if (res.ok) window.location.href = "dashboard.html";
+        else alert("Error creating board");
+      }
+    </script>
+  </body>
+</html>
